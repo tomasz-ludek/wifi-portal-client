@@ -2,17 +2,17 @@ package com.dashngo.android.net.model;
 
 public class Product {
 
-    private long upc;
+    private String upc;
     private String name;
     private String price;
     private String address;
 
-    public long getUpc() {
-        return upc;
+    public void setUpc(String upc) {
+        this.upc = upc;
     }
 
-    public String getUpcString() {
-        return upc + "";
+    public String getUpc() {
+        return upc;
     }
 
     public String getName() {

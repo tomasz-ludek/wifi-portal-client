@@ -14,25 +14,20 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.crashlytics.android.Crashlytics;
-import com.dashngo.android.ShoppingCartAdapter;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
-import io.fabric.sdk.android.Fabric;
-
 import com.dashngo.android.barcode.CaptureActivityAnyOrientation;
 import com.dashngo.android.net.ApiClient;
 import com.dashngo.android.net.model.Product;
 import com.dashngo.android.net.model.StoreInfo;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView shoppingCartView;
 
     private ApiClient apiClient;
-    private Call<List<Product>> productListCall;
+    private Call<Map<String, Product>> productListCall;
     private Call<StoreInfo> storeInfoCall;
 
     private ShoppingCartAdapter shoppingCartAdapter;
@@ -158,27 +153,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void processBarcode(final IntentResult barcode) {
         productListCall = apiClient.productList();
-        productListCall.enqueue(new Callback<List<Product>>() {
+        productListCall.enqueue(new Callback<Map<String, Product>>() {
             @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+            public void onResponse(Call<Map<String, Product>> call, Response<Map<String, Product>> response) {
                 if (!response.isSuccessful()) {
                     //error
                 }
-                List<Product> productList = response.body();
-                Map<String, Product> productMap = new HashMap<>();
-                for (Product product : productList) {
-                    productMap.put(product.getUpcString(), product);
-                }
-
+                Map<String, Product> productMap = response.body();
                 String upc = barcode.getContents();
                 Product product = productMap.get(upc);
                 if (product != null) {
+                    product.setUpc(upc);
                     shoppingCartAdapter.addItem(product);
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
+            public void onFailure(Call<Map<String, Product>> call, Throwable t) {
 
             }
         });
