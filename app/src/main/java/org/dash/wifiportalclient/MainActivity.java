@@ -3,6 +3,8 @@ package org.dash.wifiportalclient;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import org.dash.wifiportalclient.net.ApiClient;
 import org.dash.wifiportalclient.net.model.Product;
 import org.dash.wifiportalclient.net.model.StoreInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,10 +44,14 @@ public class MainActivity extends AppCompatActivity {
     TextView dashPriceView;
     @BindView(R.id.fiat)
     TextView fiatView;
+    @BindView(R.id.shopping_cart)
+    RecyclerView shoppingCartView;
 
     private ApiClient apiClient;
     private Call<List<Product>> productListCall;
     private Call<StoreInfo> storeInfoCall;
+
+    private ShoppingCartAdapter shoppingCartAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
         apiClient = ApiClient.getInstance();
         refreshStoreInfo();
+        shoppingCartAdapter = new ShoppingCartAdapter(this, new ArrayList<Product>());
+        shoppingCartView.setLayoutManager(new LinearLayoutManager(this));
+        shoppingCartView.setAdapter(shoppingCartAdapter);
     }
 
     private void refreshStoreInfo() {
@@ -134,11 +144,10 @@ public class MainActivity extends AppCompatActivity {
                     productMap.put(product.getUpcString(), product);
                 }
 
-//                Long upc = barcode.getContents();
-                Long upc = 1l;
+                String upc = barcode.getContents();
                 Product product = productMap.get(upc);
                 if (product != null) {
-                    //show info
+                    shoppingCartAdapter.addItem(product);
                 }
             }
 
