@@ -45,6 +45,11 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         notifyItemInserted(dataset.size());
     }
 
+    public void removeItem(int position) {
+        dataset.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
         private TextView nameView;

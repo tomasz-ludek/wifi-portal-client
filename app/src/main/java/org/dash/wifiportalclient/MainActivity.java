@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,9 +65,29 @@ public class MainActivity extends AppCompatActivity {
 
         apiClient = ApiClient.getInstance();
         refreshStoreInfo();
+        initShoppingCart();
+    }
+
+    private void initShoppingCart() {
         shoppingCartAdapter = new ShoppingCartAdapter(this, new ArrayList<Product>());
         shoppingCartView.setLayoutManager(new LinearLayoutManager(this));
         shoppingCartView.setAdapter(shoppingCartAdapter);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int position = viewHolder.getAdapterPosition();
+                shoppingCartAdapter.removeItem(position);
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(shoppingCartView);
     }
 
     private void refreshStoreInfo() {
