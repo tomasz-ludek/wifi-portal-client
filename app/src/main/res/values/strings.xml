@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WiFi Portal Client</string>
+    <string name="action_refresh_info">Refresh store info</string>
 </resources>

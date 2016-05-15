@@ -34,7 +34,7 @@ public class ApiClient {
         dashNGoApi = retrofit.create(DashNGoApi.class);
     }
 
-    public Call<StoreInfo> storeInfo(Callback<StoreInfo> callback) {
+    public Call<StoreInfo> storeInfo() {
         return dashNGoApi.storeInfo();
     }
 
