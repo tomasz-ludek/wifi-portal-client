@@ -1,12 +1,11 @@
-package org.dash.wifiportalclient.net;
+package com.dashngo.android.net;
 
-import org.dash.wifiportalclient.net.model.Product;
-import org.dash.wifiportalclient.net.model.StoreInfo;
+import com.dashngo.android.net.model.Product;
+import com.dashngo.android.net.model.StoreInfo;
 
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

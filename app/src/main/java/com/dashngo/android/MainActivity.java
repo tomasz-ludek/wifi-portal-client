@@ -1,4 +1,4 @@
-package org.dash.wifiportalclient;
+package com.dashngo.android;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,13 +13,17 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.crashlytics.android.Crashlytics;
+import com.dashngo.android.ShoppingCartAdapter;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import org.dash.wifiportalclient.barcode.CaptureActivityAnyOrientation;
-import org.dash.wifiportalclient.net.ApiClient;
-import org.dash.wifiportalclient.net.model.Product;
-import org.dash.wifiportalclient.net.model.StoreInfo;
+import io.fabric.sdk.android.Fabric;
+
+import com.dashngo.android.barcode.CaptureActivityAnyOrientation;
+import com.dashngo.android.net.ApiClient;
+import com.dashngo.android.net.model.Product;
+import com.dashngo.android.net.model.StoreInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 

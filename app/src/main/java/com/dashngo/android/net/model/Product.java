@@ -1,4 +1,4 @@
-package org.dash.wifiportalclient.net.model;
+package com.dashngo.android.net.model;
 
 public class Product {
 

@@ -1,4 +1,4 @@
-package org.dash.wifiportalclient;
+package com.dashngo.android;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.dash.wifiportalclient.net.model.Product;
+import com.dashngo.android.net.model.Product;
 
 import java.util.List;
 

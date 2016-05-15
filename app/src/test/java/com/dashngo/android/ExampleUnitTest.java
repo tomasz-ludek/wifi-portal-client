@@ -1,10 +1,10 @@
-package org.dash.wifiportalclient;
+package com.dashngo.android;
 
+import com.dashngo.android.net.model.Product;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.dash.wifiportalclient.net.model.Product;
 import org.junit.Test;
 
 import java.util.Map;
@@ -40,7 +40,8 @@ public class ExampleUnitTest {
                 "    \"address\": \"Xa;sldfkjasasdf;dlfkjasdf\"\n" +
                 "}\n" +
                 "}";
-        TypeToken<Map<String, Product>> mapTypeToken = new TypeToken<Map<String, Product>>() {};
+        TypeToken<Map<String, Product>> mapTypeToken = new TypeToken<Map<String, Product>>() {
+        };
         Map<String, Product> productMap = gson.fromJson(json, mapTypeToken.getType());
         System.out.println(productMap);
     }

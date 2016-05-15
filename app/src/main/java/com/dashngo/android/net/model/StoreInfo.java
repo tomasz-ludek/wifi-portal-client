@@ -1,4 +1,4 @@
-package org.dash.wifiportalclient.net.model;
+package com.dashngo.android.net.model;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,4 +1,4 @@
-package org.dash.wifiportalclient.barcode;
+package com.dashngo.android.barcode;
 
 import com.journeyapps.barcodescanner.CaptureActivity;
 

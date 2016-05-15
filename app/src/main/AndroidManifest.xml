@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.dash.wifiportalclient">
+    package="com.dashngo.android">
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -29,6 +29,9 @@
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="1a09a479c5f5892fd844e948dacb9eb0dc445661" />
     </application>
 
 </manifest>
