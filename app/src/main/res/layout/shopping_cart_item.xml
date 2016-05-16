@@ -5,11 +5,20 @@
     android:padding="8dp">
 
     <TextView
+        android:id="@+id/quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1 x"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginRight="4dp" />
+
+    <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Product name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_toRightOf="@+id/quantity" />
 
     <TextView
         android:id="@+id/price"

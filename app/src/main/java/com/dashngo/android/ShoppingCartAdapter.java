@@ -7,15 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dashngo.android.net.model.Product;
+import com.dashngo.android.net.model.ProductWrapper;
 
 import java.util.List;
 
 public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.CustomViewHolder> {
 
-    private List<Product> dataset;
+    private List<ProductWrapper> dataset;
 
-    public ShoppingCartAdapter(Context context, List<Product> dataset) {
+    public ShoppingCartAdapter(Context context, List<ProductWrapper> dataset) {
         this.dataset = dataset;
     }
 
@@ -28,10 +28,11 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
 
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
-        Product productItem = dataset.get(i);
+        ProductWrapper productItem = dataset.get(i);
         customViewHolder.setName(productItem.getName());
         customViewHolder.setPrice("$" + productItem.getPrice());
         customViewHolder.setDashAddress(productItem.getAddress());
+        customViewHolder.setQuantity(productItem.getQuantity() + " x");
     }
 
     @Override
@@ -39,27 +40,65 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         return (dataset != null ? dataset.size() : 0);
     }
 
-    public void addItem(Product product) {
-        dataset.add(product);
-        notifyItemInserted(dataset.size());
+    public void increaseQuantity(int position, int value) {
+        dataset.get(position).increaseQuantity(value);
+        notifyItemChanged(position);
+    }
+
+    public void addItem(ProductWrapper item) {
+        int position = findItem(item.getUpc());
+        if (position >= 0) {
+            ProductWrapper productWrapper = dataset.get(position);
+            productWrapper.increaseQuantity(1);
+            notifyItemChanged(position);
+        } else {
+            dataset.add(item);
+            notifyItemInserted(dataset.size());
+        }
     }
 
     public void removeItem(int position) {
-        dataset.remove(position);
-        notifyItemRemoved(position);
+        ProductWrapper productWrapper = dataset.get(position);
+        if (productWrapper.getQuantity() > 1) {
+            productWrapper.increaseQuantity(-1);
+            notifyItemChanged(position);
+        } else {
+            dataset.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    private int findItem(String upc) {
+        for (int i = 0; i < dataset.size(); i++) {
+            ProductWrapper product = dataset.get(i);
+            if (upc.equals(product.getUpc())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public ProductWrapper getItem(int position) {
+        return dataset.get(position);
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
+        private TextView quantityView;
         private TextView nameView;
         private TextView priceView;
         private TextView dashAddressView;
 
         public CustomViewHolder(View view) {
             super(view);
+            quantityView = (TextView) view.findViewById(R.id.quantity);
             nameView = (TextView) view.findViewById(R.id.name);
             priceView = (TextView) view.findViewById(R.id.price);
             dashAddressView = (TextView) view.findViewById(R.id.dash_address);
+        }
+
+        public void setQuantity(String quantity) {
+            quantityView.setText(quantity);
         }
 
         public void setName(String name) {

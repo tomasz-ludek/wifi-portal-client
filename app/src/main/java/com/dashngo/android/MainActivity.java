@@ -19,6 +19,7 @@ import com.crashlytics.android.Crashlytics;
 import com.dashngo.android.barcode.CaptureActivityAnyOrientation;
 import com.dashngo.android.net.ApiClient;
 import com.dashngo.android.net.model.Product;
+import com.dashngo.android.net.model.ProductWrapper;
 import com.dashngo.android.net.model.StoreInfo;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initShoppingCart() {
-        shoppingCartAdapter = new ShoppingCartAdapter(this, new ArrayList<Product>());
+        shoppingCartAdapter = new ShoppingCartAdapter(this, new ArrayList<ProductWrapper>());
         shoppingCartView.setLayoutManager(new LinearLayoutManager(this));
         shoppingCartView.setAdapter(shoppingCartAdapter);
 
@@ -84,7 +85,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 int position = viewHolder.getAdapterPosition();
-                removeShoppingCartEntry(position);
+                switch (swipeDir) {
+                    case ItemTouchHelper.LEFT:
+                        shoppingCartAdapter.increaseQuantity(position, 1);
+                        break;
+                    case ItemTouchHelper.RIGHT:
+                        ProductWrapper item = shoppingCartAdapter.getItem(position);
+                        if (item.getQuantity() > 1) {
+                            shoppingCartAdapter.increaseQuantity(position, -1);
+                        } else {
+                            removeShoppingCartEntry(position);
+                        }
+                        break;
+                }
             }
         };
 
@@ -183,8 +196,9 @@ public class MainActivity extends AppCompatActivity {
                 String upc = barcode.getContents();
                 Product product = productMap.get(upc);
                 if (product != null) {
-                    product.setUpc(upc);
-                    shoppingCartAdapter.addItem(product);
+                    ProductWrapper productWrapper = ProductWrapper.wrap(product);
+                    productWrapper.setUpc(upc);
+                    shoppingCartAdapter.addItem(productWrapper);
                 }
             }
 

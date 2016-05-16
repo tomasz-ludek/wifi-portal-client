@@ -23,10 +23,6 @@ public class Product {
         return price;
     }
 
-    public Float getPriceFloat() {
-        return Float.parseFloat(price);
-    }
-
     public String getAddress() {
         return address;
     }
