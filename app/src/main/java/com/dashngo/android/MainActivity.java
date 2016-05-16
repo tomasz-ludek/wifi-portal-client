@@ -1,7 +1,9 @@
 package com.dashngo.android;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -82,12 +84,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 int position = viewHolder.getAdapterPosition();
-                shoppingCartAdapter.removeItem(position);
+                removeShoppingCartEntry(position);
             }
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(shoppingCartView);
+    }
+
+    private void removeShoppingCartEntry(final int position) {
+        new AlertDialog.Builder(this)
+                .setMessage("Remove product?")
+                .setCancelable(true)
+                .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        shoppingCartAdapter.removeItem(position);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        shoppingCartAdapter.notifyItemChanged(position);
+                    }
+                }).create().show();
     }
 
     private void refreshStoreInfo() {

@@ -29,9 +29,8 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
         Product productItem = dataset.get(i);
-
         customViewHolder.setName(productItem.getName());
-        customViewHolder.setPrice(productItem.getPrice());
+        customViewHolder.setPrice("$" + productItem.getPrice());
         customViewHolder.setDashAddress(productItem.getAddress());
     }
 
