@@ -23,13 +23,4 @@
 
     <include layout="@layout/content_main" />
 
-    <ImageView
-        android:id="@+id/help_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#BB000000"
-        android:padding="24dp"
-        android:src="@drawable/help_screen"
-        android:visibility="gone" />
-
 </android.support.design.widget.CoordinatorLayout>

@@ -12,4 +12,5 @@
     <string name="permission_rationale_dialog_message">It looks like you have turned off permissions required for this feature. It can be enabled under Phone Settings&gt;Apps&gt;True Local&gt;Permissions</string>
     <string name="permission_rationale_positive_button_text">Go to Settings</string>
     <string name="permission_rationale_negative_button_text">OK</string>
+    <string name="title_activity_help">helpActivity</string>
 </resources>
