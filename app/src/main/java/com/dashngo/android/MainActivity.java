@@ -3,6 +3,7 @@ package com.dashngo.android;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     TextView fiatView;
     @BindView(R.id.shopping_cart)
     RecyclerView shoppingCartView;
+    @BindView(R.id.pay)
+    Button payButtonView;
 
     private ApiClient apiClient;
     private Call<Map<String, Product>> productListCall;
@@ -63,12 +67,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initToolbar();
 
         apiClient = ApiClient.getInstance();
         refreshStoreInfo();
         initShoppingCart();
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayShowHomeEnabled(true);
+            supportActionBar.setIcon(R.mipmap.ic_launcher);
+        }
     }
 
     private void initShoppingCart() {
@@ -76,51 +89,8 @@ public class MainActivity extends AppCompatActivity {
         shoppingCartView.setLayoutManager(new LinearLayoutManager(this));
         shoppingCartView.setAdapter(shoppingCartAdapter);
 
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int position = viewHolder.getAdapterPosition();
-                switch (swipeDir) {
-                    case ItemTouchHelper.LEFT:
-                        shoppingCartAdapter.increaseQuantity(position, 1);
-                        break;
-                    case ItemTouchHelper.RIGHT:
-                        ProductWrapper item = shoppingCartAdapter.getItem(position);
-                        if (item.getQuantity() > 1) {
-                            shoppingCartAdapter.increaseQuantity(position, -1);
-                        } else {
-                            removeShoppingCartEntry(position);
-                        }
-                        break;
-                }
-            }
-        };
-
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(shoppingCartView);
-    }
-
-    private void removeShoppingCartEntry(final int position) {
-        new AlertDialog.Builder(this)
-                .setMessage("Remove product?")
-                .setCancelable(true)
-                .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        shoppingCartAdapter.removeItem(position);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        shoppingCartAdapter.notifyItemChanged(position);
-                    }
-                }).create().show();
     }
 
     private void refreshStoreInfo() {
@@ -152,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void refreshViewState() {
+        payButtonView.setEnabled(shoppingCartAdapter.getItemCount() > 0);
+    }
+
     @OnClick(R.id.scan_barcode)
     public void onScanQrButtonClick(View view) {
         IntentIntegrator integrator = new IntentIntegrator(this);
@@ -172,9 +146,16 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_refresh_info:
                 refreshStoreInfo();
                 return true;
+            case R.id.action_help:
+                showHelp();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showHelp() {
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -199,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                     ProductWrapper productWrapper = ProductWrapper.wrap(product);
                     productWrapper.setUpc(upc);
                     shoppingCartAdapter.addItem(productWrapper);
+                    refreshViewState();
                 }
             }
 
@@ -219,4 +201,48 @@ public class MainActivity extends AppCompatActivity {
             productListCall.cancel();
         }
     }
+
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            int position = viewHolder.getAdapterPosition();
+            switch (swipeDir) {
+                case ItemTouchHelper.LEFT:
+                    shoppingCartAdapter.increaseQuantity(position, 1);
+                    break;
+                case ItemTouchHelper.RIGHT:
+                    ProductWrapper item = shoppingCartAdapter.getItem(position);
+                    if (item.getQuantity() > 1) {
+                        shoppingCartAdapter.increaseQuantity(position, -1);
+                    } else {
+                        removeShoppingCartEntry(position);
+                    }
+                    break;
+            }
+        }
+
+        private void removeShoppingCartEntry(final int position) {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setMessage("Remove product?")
+                    .setCancelable(true)
+                    .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            shoppingCartAdapter.removeItem(position);
+                            refreshViewState();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            shoppingCartAdapter.notifyItemChanged(position);
+                        }
+                    }).create().show();
+        }
+    };
 }
