@@ -1,131 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/activity_vertical_margin"
+    android:fitsSystemWindows="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.dashngo.android.MainActivity"
-    tools:showIn="@layout/activity_main">
-
-    <ViewSwitcher
-        android:id="@+id/store_info_view_switcher"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inAnimation="@android:anim/fade_in"
-        android:outAnimation="@android:anim/fade_out">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/store_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:text="Dash N Go"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/store_url"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/store_name"
-                android:text="www.dashngo.com"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/dash_price_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/store_url"
-                android:text="Dash price:"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/dash_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/dash_price_hint"
-                android:layout_marginLeft="8dp"
-                android:layout_toEndOf="@+id/dash_price_hint"
-                android:text="6.10"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/fiat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/dash_price"
-                android:layout_marginLeft="4dp"
-                android:layout_toEndOf="@+id/dash_price"
-                android:text="USD"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/scan_barcode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_add_shopping_cart" />
-
-        </RelativeLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminate="true" />
-        </FrameLayout>
-
-    </ViewSwitcher>
+    tools:context="com.dashngo.android.MainActivity">
 
     <LinearLayout
-        android:id="@+id/shopping_cart_panel"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_vertical_margin">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <ViewSwitcher
+            android:id="@+id/store_info_view_switcher"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_shopping_cart"
-            android:drawablePadding="8dp"
-            android:padding="8dp"
-            android:text="Shopping Cart"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:inAnimation="@android:anim/fade_in"
+            android:outAnimation="@android:anim/fade_out">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/shopping_cart"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/store_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Dash N Go"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/store_url"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/store_name"
+                    android:text="www.dashngo.com"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/dash_price_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/store_url"
+                    android:text="Dash price:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/dash_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/dash_price_hint"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toEndOf="@+id/dash_price_hint"
+                    android:text="6.10"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/fiat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/dash_price"
+                    android:layout_marginLeft="4dp"
+                    android:layout_toEndOf="@+id/dash_price"
+                    android:text="USD"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/scan_barcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_add_shopping_cart" />
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true" />
+            </FrameLayout>
+
+        </ViewSwitcher>
+
+        <LinearLayout
+            android:id="@+id/shopping_cart_panel"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="16dp"
             android:layout_weight="1"
-            android:padding="8dp"
-            android:scrollbars="vertical" />
+            android:background="@android:color/white"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/pay"
-            android:layout_width="128dp"
-            android:layout_height="52dp"
-            android:layout_gravity="right"
-            android:layout_margin="@dimen/fab_margin"
-            android:background="@drawable/pay_button_selector"
-            android:enabled="false" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_shopping_cart"
+                android:drawablePadding="8dp"
+                android:padding="8dp"
+                android:text="Shopping Cart"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/shopping_cart"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="8dp"
+                android:scrollbars="vertical" />
+
+            <Button
+                android:id="@+id/pay"
+                android:layout_width="128dp"
+                android:layout_height="52dp"
+                android:layout_gravity="right"
+                android:layout_margin="@dimen/fab_margin"
+                android:background="@drawable/pay_button_selector"
+                android:enabled="false" />
+
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/help_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#BB000000"
+        android:padding="24dp"
+        android:src="@drawable/help_screen"
+        android:visibility="gone" />
+
+</FrameLayout>

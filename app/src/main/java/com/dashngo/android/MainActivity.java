@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView shoppingCartView;
     @BindView(R.id.pay)
     Button payButtonView;
+    @BindView(R.id.help_screen)
+    View helpScreenView;
 
     private ApiClient apiClient;
     private Call<Map<String, Product>> productListCall;
@@ -144,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.help_screen)
+    public void onHelpScreenClick() {
+        showHelp(false);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity, menu);
@@ -157,15 +165,15 @@ public class MainActivity extends AppCompatActivity {
                 refreshStoreInfo();
                 return true;
             case R.id.action_help:
-                showHelp();
+                showHelp(true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void showHelp() {
-
+    private void showHelp(boolean show) {
+        helpScreenView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public boolean cameraPermissionGranted() {
