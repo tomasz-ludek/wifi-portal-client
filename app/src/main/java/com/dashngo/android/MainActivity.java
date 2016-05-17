@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     TextView fiatView;
     @BindView(R.id.shopping_cart)
     RecyclerView shoppingCartView;
-    @BindView(R.id.pay)
+    @BindView(R.id.pay_button)
     Button payButtonView;
     @BindView(R.id.help_screen)
     View helpScreenView;
@@ -150,6 +150,12 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.help_screen)
     public void onHelpScreenClick() {
         showHelp(false);
+    }
+
+    @OnClick(R.id.pay_button)
+    public void onPayButtonClick() {
+        Intent intent = ReceiptActivity.createIntent(this, shoppingCartAdapter.getItems());
+        startActivity(intent);
     }
 
     @Override

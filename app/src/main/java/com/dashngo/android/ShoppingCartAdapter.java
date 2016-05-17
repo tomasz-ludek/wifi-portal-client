@@ -82,6 +82,10 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         return dataset.get(position);
     }
 
+    public List<ProductWrapper> getItems() {
+        return dataset;
+    }
+
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
         private TextView quantityView;
