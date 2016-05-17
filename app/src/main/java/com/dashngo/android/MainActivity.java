@@ -1,8 +1,15 @@
 package com.dashngo.android;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -38,6 +44,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int REQUEST_CAMERA_PERMISSION = 0x11;
 
     @BindView(R.id.store_info_view_switcher)
     ViewSwitcher storeInfoViewSwitcher;
@@ -127,11 +135,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.scan_barcode)
-    public void onScanQrButtonClick(View view) {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
-        integrator.setOrientationLocked(false);
-        integrator.initiateScan();
+    public void onScanQrButtonClick() {
+        if (cameraPermissionGranted()) {
+            IntentIntegrator integrator = new IntentIntegrator(this);
+            integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
+            integrator.setOrientationLocked(false);
+            integrator.initiateScan();
+        }
     }
 
     @Override
@@ -156,6 +166,67 @@ public class MainActivity extends AppCompatActivity {
 
     private void showHelp() {
 
+    }
+
+    public boolean cameraPermissionGranted() {
+        int checkResult = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (checkResult == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA},
+                REQUEST_CAMERA_PERMISSION);
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CAMERA_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onScanQrButtonClick();
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                        showCameraPermissionDeniedDialog();
+                    } else {
+                        showCameraPermissionRationaleDialog();
+                    }
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void showCameraPermissionDeniedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.camera_permission_denied_dialog_title)
+                .setMessage(R.string.camera_permission_denied_dialog_message)
+                .setPositiveButton(R.string.permission_denied_positive_button_text, null)
+                .setNegativeButton(R.string.permission_denied_negative_button_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onScanQrButtonClick();
+                    }
+                })
+                .show();
+    }
+
+    private void showCameraPermissionRationaleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.permission_rationale_dialog_message)
+                .setPositiveButton(R.string.permission_rationale_positive_button_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton(R.string.permission_rationale_negative_button_text, null)
+                .show();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

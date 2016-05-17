@@ -2,4 +2,14 @@
     <string name="app_name">Dash N Go</string>
     <string name="action_refresh_info">Refresh store info</string>
     <string name="action_help">Show help</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied_dialog_title">Camera Permission Denied</string>
+    <string name="camera_permission_denied_dialog_message">Dash N Go requires this permission to allow you to scan barcodes. Are you sure you want to deny this permission?</string>
+    <string name="permission_denied_positive_button_text">I\'m sure</string>
+    <string name="permission_denied_negative_button_text">Retry</string>
+
+    <string name="permission_rationale_dialog_message">It looks like you have turned off permissions required for this feature. It can be enabled under Phone Settings&gt;Apps&gt;True Local&gt;Permissions</string>
+    <string name="permission_rationale_positive_button_text">Go to Settings</string>
+    <string name="permission_rationale_negative_button_text">OK</string>
 </resources>
