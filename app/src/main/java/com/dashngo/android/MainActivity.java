@@ -23,12 +23,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.crashlytics.android.Crashlytics;
 import com.dashngo.android.barcode.CaptureActivityAnyOrientation;
 import com.dashngo.android.net.ApiClient;
 import com.dashngo.android.net.model.Product;
 import com.dashngo.android.net.model.ProductWrapper;
 import com.dashngo.android.net.model.StoreInfo;
+import com.dashngo.android.tools.Configuration;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -79,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
         apiClient = ApiClient.getInstance();
         refreshStoreInfo();
         initShoppingCart();
+
+        boolean firstRun = Configuration.getInstance().isFirstRun();
+        if (firstRun) {
+            showHelp();
+        }
     }
 
     private void initToolbar() {

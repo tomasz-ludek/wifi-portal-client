@@ -3,12 +3,10 @@ package com.dashngo.android;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
+import com.dashngo.android.tools.Configuration;
 
 import io.fabric.sdk.android.Fabric;
 
-/**
- * Created by ludex on 2016-05-17.
- */
 public class DashNGoApplication extends Application {
 
     @Override
@@ -17,5 +15,6 @@ public class DashNGoApplication extends Application {
         if (!BuildConfig.DEBUG) {
             Fabric.with(this, new Crashlytics());
         }
+        Configuration.init(getApplicationContext());
     }
 }
