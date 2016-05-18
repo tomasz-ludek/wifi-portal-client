@@ -8,20 +8,20 @@
         android:id="@+id/quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="4dp"
         android:text="1 x"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginRight="4dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/quantity"
         android:text="Product name"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_toRightOf="@+id/quantity" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/total_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/name"
@@ -29,6 +29,18 @@
         android:layout_gravity="right"
         android:text="Price"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/total_price"
+        android:layout_gravity="right"
+        android:text="Price"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#cccccc"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/dash_address"
@@ -44,11 +56,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/colorAccent"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentStart="false"
         android:layout_alignParentBottom="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false"
         android:layout_below="@+id/dash_address"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:background="@color/colorAccent" />
 
 </RelativeLayout>

@@ -26,10 +26,6 @@ public class ProductWrapper {
         return product.getName();
     }
 
-    public String getPrice() {
-        return product.getPrice();
-    }
-
     public String getAddress() {
         return product.getAddress();
     }
@@ -37,6 +33,10 @@ public class ProductWrapper {
     public Float getPriceFloat() {
         String price = product.getPrice();
         return Float.parseFloat(price);
+    }
+
+    public float getTotalPrice() {
+        return getPriceFloat() * getQuantity();
     }
 
     public int getQuantity() {
