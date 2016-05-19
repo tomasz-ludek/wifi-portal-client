@@ -1,6 +1,9 @@
 package com.dashngo.android.net.model;
 
-public class ProductWrapper {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ProductWrapper implements Parcelable {
 
     private Product product;
 
@@ -46,4 +49,32 @@ public class ProductWrapper {
     public void increaseQuantity(int value) {
         quantity += value;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeSerializable(this.product);
+        dest.writeInt(this.quantity);
+    }
+
+    protected ProductWrapper(Parcel in) {
+        this.product = (Product) in.readSerializable();
+        this.quantity = in.readInt();
+    }
+
+    public static final Parcelable.Creator<ProductWrapper> CREATOR = new Parcelable.Creator<ProductWrapper>() {
+        @Override
+        public ProductWrapper createFromParcel(Parcel source) {
+            return new ProductWrapper(source);
+        }
+
+        @Override
+        public ProductWrapper[] newArray(int size) {
+            return new ProductWrapper[size];
+        }
+    };
 }

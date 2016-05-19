@@ -1,6 +1,5 @@
 package com.dashngo.android;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,15 +7,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dashngo.android.net.model.ProductWrapper;
+import com.dashngo.android.tools.ExtTextUtils;
 
 import java.util.List;
-import java.util.Locale;
 
 public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.CustomViewHolder> {
 
     private List<ProductWrapper> dataset;
 
-    public ShoppingCartAdapter(Context context, List<ProductWrapper> dataset) {
+    public ShoppingCartAdapter(List<ProductWrapper> dataset) {
         this.dataset = dataset;
     }
 
@@ -113,13 +112,9 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         }
 
         public void setPrice(Float price, float quantity) {
-            totalPriceView.setText(formatPrice(price * quantity));
+            totalPriceView.setText(ExtTextUtils.formatPrice(price * quantity));
             priceView.setVisibility(quantity > 1 ? View.VISIBLE : View.GONE);
-            priceView.setText(formatPrice(price));
-        }
-
-        private String formatPrice(float value) {
-            return String.format(Locale.US, "$%.2f", value);
+            priceView.setText(ExtTextUtils.formatPrice(price));
         }
 
         public void setDashAddress(String dashAddress) {

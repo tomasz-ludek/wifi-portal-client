@@ -80,8 +80,10 @@ public class MainActivity extends AppCompatActivity {
         refreshStoreInfo();
         initShoppingCart();
 
-        boolean firstRun = Configuration.getInstance().isFirstRun();
+        Configuration configuration = Configuration.getInstance();
+        boolean firstRun = configuration.isFirstRun();
         if (firstRun) {
+            configuration.setIsFirstRun(false);
             showHelp();
         }
     }
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initShoppingCart() {
-        shoppingCartAdapter = new ShoppingCartAdapter(this, new ArrayList<ProductWrapper>());
+        shoppingCartAdapter = new ShoppingCartAdapter(new ArrayList<ProductWrapper>());
         shoppingCartView.setLayoutManager(new LinearLayoutManager(this));
         shoppingCartView.setAdapter(shoppingCartAdapter);
 
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.pay_button)
     public void onPayButtonClick() {
-        Intent intent = ReceiptActivity.createIntent(this, shoppingCartAdapter.getItems());
+        Intent intent = ReceiptActivity.createIntent(this, (ArrayList<ProductWrapper>) shoppingCartAdapter.getItems());
         startActivity(intent);
     }
 

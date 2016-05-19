@@ -1,6 +1,8 @@
 package com.dashngo.android.net.model;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
 
     private String upc;
     private String name;
