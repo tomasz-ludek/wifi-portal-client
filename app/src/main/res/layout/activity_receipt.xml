@@ -32,11 +32,23 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.dashngo.android.ReceiptActivity">
 
+        <TextView
+            android:id="@+id/payment_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Payment status"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ff0000" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/shopping_cart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/summary_panel"
+            android:layout_below="@+id/payment_status"
             android:padding="8dp"
             android:scrollbars="vertical" />
 
