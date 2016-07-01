@@ -2,6 +2,7 @@
     <string name="app_name">Dash N Go</string>
     <string name="action_refresh_info">Refresh store info</string>
     <string name="action_help">Show help</string>
+    <string name="action_history">Transaction history</string>
 
     <!-- Permissions -->
     <string name="camera_permission_denied_dialog_title">Camera Permission Denied</string>

@@ -2,6 +2,7 @@ package com.dashngo.android;
 
 import android.app.Application;
 
+import com.activeandroid.ActiveAndroid;
 import com.crashlytics.android.Crashlytics;
 import com.dashngo.android.tools.Configuration;
 
@@ -16,5 +17,6 @@ public class DashNGoApplication extends Application {
             Fabric.with(this, new Crashlytics());
         }
         Configuration.init(getApplicationContext());
+        ActiveAndroid.initialize(this, true);
     }
 }

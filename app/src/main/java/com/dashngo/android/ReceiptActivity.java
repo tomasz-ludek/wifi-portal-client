@@ -3,6 +3,7 @@ package com.dashngo.android;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -20,7 +21,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dashngo.android.data.ProductEntity;
+import com.dashngo.android.data.ReceiptEntity;
+import com.dashngo.android.net.model.Product;
 import com.dashngo.android.net.model.ProductWrapper;
+import com.dashngo.android.net.model.StoreInfo;
 import com.dashngo.android.tools.ExtTextUtils;
 import com.google.protobuf.ByteString;
 
@@ -31,6 +36,7 @@ import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.script.ScriptBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -41,13 +47,22 @@ import de.schildbach.wallet.integration.android.DashIntegration;
 
 public class ReceiptActivity extends AppCompatActivity {
 
+    private static final String EXTRA_HISTORY_RECEIPT_ID = ReceiptActivity.class.getSimpleName() + "extra_history_receipt_id";
+    private static final String EXTRA_STORE_INFO = ReceiptActivity.class.getSimpleName() + "extra_store_info";
     private static final String EXTRA_PRODUCT_LIST = ReceiptActivity.class.getSimpleName() + "extra_product_list";
 
     private static final int REQUEST_CODE = 0x01;
 
-    public static Intent createIntent(Context context, ArrayList<ProductWrapper> productList) {
+    public static Intent createIntent(Context context, StoreInfo storeInfo, ArrayList<ProductWrapper> productList) {
         Intent intent = new Intent(context, ReceiptActivity.class);
+        intent.putExtra(EXTRA_STORE_INFO, storeInfo);
         intent.putParcelableArrayListExtra(EXTRA_PRODUCT_LIST, productList);
+        return intent;
+    }
+
+    public static Intent createIntent(Context context, long historyReceiptId) {
+        Intent intent = new Intent(context, ReceiptActivity.class);
+        intent.putExtra(EXTRA_HISTORY_RECEIPT_ID, historyReceiptId);
         return intent;
     }
 
@@ -55,11 +70,15 @@ public class ReceiptActivity extends AppCompatActivity {
     RecyclerView shoppingCartView;
     @BindView(R.id.pay_button)
     Button payButtonView;
-    @BindView(R.id.total_cost)
-    TextView totalCostView;
+    @BindView(R.id.total_cost_dash)
+    TextView totalCostDashView;
+    @BindView(R.id.total_cost_fiat)
+    TextView totalCostFiatView;
     @BindView(R.id.payment_status)
     TextView paymentStatusView;
 
+    private long receiptId = System.currentTimeMillis();
+    private StoreInfo storeInfo;
     private ShoppingCartAdapter shoppingCartAdapter;
 
     private String transactionHash;
@@ -81,27 +100,52 @@ public class ReceiptActivity extends AppCompatActivity {
         if (supportActionBar != null) {
             supportActionBar.setDisplayShowHomeEnabled(true);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-            supportActionBar.setTitle("Receipt");
+            supportActionBar.setTitle("Receipt #" + receiptId);
         }
     }
 
     private void initView() {
-        ArrayList<Parcelable> productListParcel = getIntent().getParcelableArrayListExtra(EXTRA_PRODUCT_LIST);
-        ArrayList<ProductWrapper> productList = new ArrayList<>();
-        for (Parcelable parcel : productListParcel) {
-            productList.add((ProductWrapper) parcel);
+        ArrayList<ProductWrapper> productList;
+        if (getIntent().hasExtra(EXTRA_HISTORY_RECEIPT_ID)) {
+            long historyReceiptId = getIntent().getLongExtra(EXTRA_HISTORY_RECEIPT_ID, -1);
+            ReceiptEntity receipt = ReceiptEntity.load(ReceiptEntity.class, historyReceiptId);
+            storeInfo = new StoreInfo(receipt.storeName, receipt.storeDashPrice, receipt.storeFiat, null);
+            productList = createProductList(receipt);
+            setTransactionStatus(receipt.transactionHash, false);
+        } else {
+            storeInfo = getIntent().getParcelableExtra(EXTRA_STORE_INFO);
+            productList = new ArrayList<>();
+            ArrayList<Parcelable> productListParcel = getIntent().getParcelableArrayListExtra(EXTRA_PRODUCT_LIST);
+            for (Parcelable parcel : productListParcel) {
+                productList.add((ProductWrapper) parcel);
+            }
         }
 
         shoppingCartAdapter = new ShoppingCartAdapter(productList);
         shoppingCartView.setLayoutManager(new LinearLayoutManager(this));
         shoppingCartView.setAdapter(shoppingCartAdapter);
 
-        float totalCost = 0;
+        float totalCostFiat = shoppingCartAdapter.getTotalCost();
         for (ProductWrapper product : productList) {
-            totalCost += product.getTotalPrice();
+            totalCostFiat += product.getTotalPrice();
         }
-        String totalCostStr = ExtTextUtils.formatPrice(totalCost);
-        totalCostView.setText(totalCostStr);
+        String totalCostStr = ExtTextUtils.formatPrice("$", totalCostFiat);
+        totalCostFiatView.setText(totalCostStr);
+        float totalCostDash = totalCostFiat / storeInfo.getDashPriceFloat();
+        String totalCostDashStr = ExtTextUtils.formatPrice("", totalCostDash);
+        totalCostDashView.setText(totalCostDashStr);
+    }
+
+    private ArrayList<ProductWrapper> createProductList(ReceiptEntity receipt) {
+        ArrayList<ProductWrapper> productList = new ArrayList<>();
+        List<ProductEntity> historyProductList = receipt.products();
+        for (ProductEntity historyProduct : historyProductList) {
+            Product product = Product.convert(historyProduct);
+            ProductWrapper productWrapper = ProductWrapper.wrap(product);
+            productWrapper.setQuantity(historyProduct.quantity);
+            productList.add(productWrapper);
+        }
+        return productList;
     }
 
     @Override
@@ -118,10 +162,10 @@ public class ReceiptActivity extends AppCompatActivity {
     @OnClick(R.id.payment_status)
     public void onPaymentStatusClick() {
         if (transactionHash != null) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://test.explorer.dash.org/tx/" + transactionHash));
+//            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://test.explorer.dash.org/tx/" + transactionHash));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://explorer.dash.org/tx/" + transactionHash));
             startActivity(browserIntent);
         }
-        Toast.makeText(this, "Payment Status Clicked", Toast.LENGTH_LONG).show();
     }
 
     @OnClick(R.id.pay_button)
@@ -137,7 +181,7 @@ public class ReceiptActivity extends AppCompatActivity {
             String basicPaymentAddress = productList.get(0).getAddress();
             basicNetworkParams = Address.getParametersFromAddress(basicPaymentAddress);
             validateAddresses(basicNetworkParams, productList);
-        } catch (AddressFormatException e) {
+        } catch (Exception e) {
             Toast.makeText(this, "Invalid address found", Toast.LENGTH_LONG).show();
             return;
         }
@@ -148,13 +192,13 @@ public class ReceiptActivity extends AppCompatActivity {
         for (Protos.Output.Builder output : outputArr) {
             paymentDetails.addOutputs(output);
         }
-        paymentDetails.setMemo("Dash N Go payment #" + (1000 + new Random().nextInt(1000)));
+        paymentDetails.setMemo("Dash N Go\nPayment #" + (1000 + new Random().nextInt(1000)));
         paymentDetails.setTime(System.currentTimeMillis());
 
         final Protos.PaymentRequest.Builder paymentRequest = Protos.PaymentRequest.newBuilder();
         paymentRequest.setSerializedPaymentDetails(paymentDetails.build().toByteString());
 
-        DashIntegration.requestForResult(this, REQUEST_CODE, paymentRequest.build().toByteArray());
+        DashIntegration.requestForResult(this, REQUEST_CODE, paymentRequest.build().toByteArray(), true);
     }
 
     private Protos.Output.Builder[] createOutputs(List<ProductWrapper> productList) {
@@ -163,7 +207,7 @@ public class ReceiptActivity extends AppCompatActivity {
         try {
             for (int i = 0; i < count; i++) {
                 String address = productList.get(i).getAddress();
-                float totalPriceDash = productList.get(i).getTotalPrice();
+                float totalPriceDash = productList.get(i).getTotalPrice() / storeInfo.getDashPriceFloat();
                 long totalPriceDashSatoshi = (long) (totalPriceDash * 100000000);
 
                 final NetworkParameters params = Address.getParametersFromAddress(address);
@@ -193,26 +237,58 @@ public class ReceiptActivity extends AppCompatActivity {
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                transactionHash = DashIntegration.transactionHashFromResult(data);
-                if (transactionHash != null) {
-                    final SpannableStringBuilder messageBuilder = new SpannableStringBuilder("Transaction hash:\n");
-                    messageBuilder.append(transactionHash);
-                    messageBuilder.setSpan(new TypefaceSpan("monospace"), messageBuilder.length() - transactionHash.length(), messageBuilder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    if (DashIntegration.paymentFromResult(data) != null) {
-                        messageBuilder.append("\n(also a BIP70 payment message was received)");
-                    }
-
-                    paymentStatusView.setText(messageBuilder);
-                    paymentStatusView.setVisibility(View.VISIBLE);
+                String transactionHashResult = DashIntegration.transactionHashFromResult(data);
+                if (transactionHashResult != null) {
+                    setTransactionStatus(transactionHashResult, DashIntegration.paymentFromResult(data) != null);
+                    saveReceipt(transactionHashResult);
                 }
-
                 Toast.makeText(this, "Thank you!", Toast.LENGTH_LONG).show();
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, "Cancelled.", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Unknown result.", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    private void setTransactionStatus(String transactionHash, boolean bip70received) {
+        this.transactionHash = transactionHash;
+        final SpannableStringBuilder messageBuilder = new SpannableStringBuilder("Transaction hash: ");
+        messageBuilder.append(transactionHash);
+        messageBuilder.setSpan(new TypefaceSpan("monospace"), messageBuilder.length() - transactionHash.length(), messageBuilder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        if (bip70received) {
+            messageBuilder.append("\n(also a BIP70 payment message was received)");
+        }
+
+        paymentStatusView.setText(messageBuilder);
+        paymentStatusView.setVisibility(View.VISIBLE);
+        payButtonView.setEnabled(false);
+        payButtonView.setBackgroundResource(R.drawable.paid_with_dash_normal);
+        findViewById(R.id.root_view).setBackgroundColor(Color.parseColor("#66BB6A"));
+    }
+
+    private void saveReceipt(String transactionHash) {
+
+        ReceiptEntity receiptEntity = new ReceiptEntity();
+        receiptEntity.storeName = storeInfo.getName();
+        receiptEntity.storeDashPrice = storeInfo.getDashPrice();
+        receiptEntity.storeFiat = storeInfo.getFiat();
+        receiptEntity.number = receiptId;
+        receiptEntity.transactionHash = transactionHash;
+        receiptEntity.date = new Date();
+        receiptEntity.totalCost = shoppingCartAdapter.getTotalCost();
+        receiptEntity.save();
+
+        List<ProductWrapper> productList = shoppingCartAdapter.getItems();
+        for (ProductWrapper product : productList) {
+            ProductEntity productEntity = new ProductEntity();
+            productEntity.receipt = receiptEntity;
+            productEntity.name = product.getName();
+            productEntity.dashAddress = product.getAddress();
+            productEntity.price = product.getPriceFloat();
+            productEntity.quantity = product.getQuantity();
+            productEntity.save();
         }
     }
 }

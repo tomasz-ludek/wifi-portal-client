@@ -9,9 +9,10 @@ import android.widget.TextView;
 import com.dashngo.android.net.model.ProductWrapper;
 import com.dashngo.android.tools.ExtTextUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.CustomViewHolder> {
+public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.ViewHolder> {
 
     private List<ProductWrapper> dataset;
 
@@ -20,14 +21,14 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     }
 
     @Override
-    public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View view = layoutInflater.inflate(R.layout.shopping_cart_item, viewGroup, false);
-        return new CustomViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
+    public void onBindViewHolder(ViewHolder customViewHolder, int i) {
         ProductWrapper productItem = dataset.get(i);
         customViewHolder.setName(productItem.getName());
         customViewHolder.setPrice(productItem.getPriceFloat(), productItem.getQuantity());
@@ -78,15 +79,23 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         return -1;
     }
 
+    public float getTotalCost() {
+        float totalCostFiat = 0;
+        for (ProductWrapper product : dataset) {
+            totalCostFiat += product.getTotalPrice();
+        }
+        return totalCostFiat;
+    }
+
     public ProductWrapper getItem(int position) {
         return dataset.get(position);
     }
 
-    public List<ProductWrapper> getItems() {
-        return dataset;
+    public ArrayList<ProductWrapper> getItems() {
+        return (ArrayList<ProductWrapper>) dataset;
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView quantityView;
         private TextView nameView;
@@ -94,7 +103,7 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         private TextView totalPriceView;
         private TextView dashAddressView;
 
-        public CustomViewHolder(View view) {
+        public ViewHolder(View view) {
             super(view);
             quantityView = (TextView) view.findViewById(R.id.quantity);
             nameView = (TextView) view.findViewById(R.id.name);
@@ -112,9 +121,9 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         }
 
         public void setPrice(Float price, float quantity) {
-            totalPriceView.setText(ExtTextUtils.formatPrice(price * quantity));
+            totalPriceView.setText(ExtTextUtils.formatPrice("$", price * quantity));
             priceView.setVisibility(quantity > 1 ? View.VISIBLE : View.GONE);
-            priceView.setText(ExtTextUtils.formatPrice(price));
+            priceView.setText(ExtTextUtils.formatPrice("$", price));
         }
 
         public void setDashAddress(String dashAddress) {

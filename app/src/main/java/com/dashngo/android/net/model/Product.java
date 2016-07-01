@@ -1,5 +1,7 @@
 package com.dashngo.android.net.model;
 
+import com.dashngo.android.data.ProductEntity;
+
 import java.io.Serializable;
 
 public class Product implements Serializable {
@@ -11,6 +13,10 @@ public class Product implements Serializable {
 
     public void setUpc(String upc) {
         this.upc = upc;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getUpc() {
@@ -27,5 +33,13 @@ public class Product implements Serializable {
 
     public String getAddress() {
         return address;
+    }
+
+    public static Product convert(ProductEntity historyProduct) {
+        Product product = new Product();
+        product.name = historyProduct.name;
+        product.address = historyProduct.dashAddress;
+        product.price = Float.toString(historyProduct.price);
+        return product;
     }
 }

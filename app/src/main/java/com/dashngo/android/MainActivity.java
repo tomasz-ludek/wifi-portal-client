@@ -38,7 +38,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private Call<Map<String, Product>> productListCall;
     private Call<StoreInfo> storeInfoCall;
 
+    private StoreInfo storeInfo;
     private ShoppingCartAdapter shoppingCartAdapter;
 
     @Override
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<StoreInfo> call, Response<StoreInfo> response) {
                 if (response.isSuccessful()) {
-                    StoreInfo storeInfo = response.body();
+                    storeInfo = response.body();
                     storeNameView.setText(storeInfo.getName());
                     storeUrlView.setText(storeInfo.getAddress());
                     dashPriceView.setText(storeInfo.getDashPrice());
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.pay_button)
     public void onPayButtonClick() {
-        Intent intent = ReceiptActivity.createIntent(this, (ArrayList<ProductWrapper>) shoppingCartAdapter.getItems());
+        Intent intent = ReceiptActivity.createIntent(this, storeInfo, shoppingCartAdapter.getItems());
         startActivity(intent);
     }
 
@@ -165,6 +165,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_history:
+                showTransactionHistory();
+                return true;
             case R.id.action_refresh_info:
                 refreshStoreInfo();
                 return true;
@@ -174,6 +177,11 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showTransactionHistory() {
+        Intent intent = new Intent(this, TransactionHistoryActivity.class);
+        startActivity(intent);
     }
 
     private void showHelp() {
@@ -261,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
                 String upc = barcode.getContents();
                 Product product = productMap.get(upc);
                 if (product != null) {
+//                    product.setAddress("ycW144v1kaJgrBLkz8QnQ5kFRrGq61dAAU");
                     ProductWrapper productWrapper = ProductWrapper.wrap(product);
                     productWrapper.setUpc(upc);
                     shoppingCartAdapter.addItem(productWrapper);

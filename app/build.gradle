@@ -4,6 +4,7 @@ def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/
 repositories {
     maven { url localMavenRepo }
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 buildscript {
@@ -28,7 +29,7 @@ android {
         applicationId "com.dashngo.android"
         minSdkVersion 17
         targetSdkVersion 23
-        versionCode 6
+        versionCode 8
         versionName "1.0"
         // Enabling multidex support.
         multiDexEnabled true
@@ -56,11 +57,12 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.6@aar') {
         transitive = true;
     }
     compile(project(':integration-android')) {
         exclude(group: 'com.google.android', module: 'android')
     }
     compile 'org.bitcoinj:darkcoinj-core:0.13.2.rix'
+    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 }

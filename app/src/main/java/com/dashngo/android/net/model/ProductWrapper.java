@@ -46,6 +46,10 @@ public class ProductWrapper implements Parcelable {
         return quantity;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public void increaseQuantity(int value) {
         quantity += value;
     }
