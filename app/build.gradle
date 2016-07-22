@@ -29,7 +29,7 @@ android {
         applicationId "com.dashngo.android"
         minSdkVersion 17
         targetSdkVersion 23
-        versionCode 8
+        versionCode 9
         versionName "1.0"
         // Enabling multidex support.
         multiDexEnabled true
@@ -57,7 +57,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.6@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
         transitive = true;
     }
     compile(project(':integration-android')) {

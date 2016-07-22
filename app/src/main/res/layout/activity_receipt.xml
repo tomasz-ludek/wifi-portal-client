@@ -80,7 +80,8 @@
                 android:layout_alignParentTop="false"
                 android:layout_alignTop="@+id/total_cost_dash"
                 android:layout_toStartOf="@+id/total_cost_dash"
-                android:src="@drawable/ic_dash_d_bottom" />
+                android:layout_marginRight="4dp"
+                android:src="@drawable/dash_d" />
 
             <TextView
                 android:id="@+id/total_cost_dash"

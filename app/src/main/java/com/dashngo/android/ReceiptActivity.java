@@ -38,7 +38,6 @@ import org.bitcoinj.script.ScriptBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,7 +76,7 @@ public class ReceiptActivity extends AppCompatActivity {
     @BindView(R.id.payment_status)
     TextView paymentStatusView;
 
-    private long receiptId = System.currentTimeMillis();
+    private long receiptId = System.currentTimeMillis() & 0x000FFFFF;
     private StoreInfo storeInfo;
     private ShoppingCartAdapter shoppingCartAdapter;
 
@@ -132,7 +131,7 @@ public class ReceiptActivity extends AppCompatActivity {
         String totalCostStr = ExtTextUtils.formatPrice("$", totalCostFiat);
         totalCostFiatView.setText(totalCostStr);
         float totalCostDash = totalCostFiat / storeInfo.getDashPriceFloat();
-        String totalCostDashStr = ExtTextUtils.formatPrice("", totalCostDash);
+        String totalCostDashStr = ExtTextUtils.formatPrice4("", totalCostDash);
         totalCostDashView.setText(totalCostDashStr);
     }
 
@@ -192,7 +191,7 @@ public class ReceiptActivity extends AppCompatActivity {
         for (Protos.Output.Builder output : outputArr) {
             paymentDetails.addOutputs(output);
         }
-        paymentDetails.setMemo("Dash N Go\nPayment #" + (1000 + new Random().nextInt(1000)));
+        paymentDetails.setMemo("Dash N Go\nPayment #" + receiptId);
         paymentDetails.setTime(System.currentTimeMillis());
 
         final Protos.PaymentRequest.Builder paymentRequest = Protos.PaymentRequest.newBuilder();
